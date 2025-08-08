@@ -41,9 +41,15 @@ async def check_dependencies():
         result["pdfkit"] = f"❌ {str(e)}"
 
     try:
+        # Create a valid 1-page PDF using PyPDF2 and then read it via pypdfium2
+        from PyPDF2 import PdfWriter
+
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-            f.write(b"%PDF-1.4\n%Test\n1 0 obj\n<<>>\nendobj\nxref\n0 1\n0000000000 65535 f \ntrailer\n<<>>\nstartxref\n0\n%%EOF")
+            writer = PdfWriter()
+            writer.add_blank_page(width=100, height=100)
+            writer.write(f)
             f.flush()
+
             pdf = pdfium.PdfDocument(f.name)
             image = pdf[0].render().to_pil()
             if isinstance(image, Image.Image):
@@ -51,14 +57,21 @@ async def check_dependencies():
     except Exception as e:
         result["pypdfium2"] = f"❌ {str(e)}"
 
+
     try:
+        from PyPDF2 import PdfWriter, PdfReader
+
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-            f.write(b"%PDF-1.4\n%Test\n1 0 obj\n<<>>\nendobj\nxref\n0 1\n0000000000 65535 f \ntrailer\n<<>>\nstartxref\n0\n%%EOF")
+            writer = PdfWriter()
+            writer.add_blank_page(width=100, height=100)
+            writer.write(f)
             f.flush()
+
             reader = PdfReader(f.name)
             result["PyPDF2"] = "✅ working"
     except Exception as e:
         result["PyPDF2"] = f"❌ {str(e)}"
+
 
     try:
         img = Image.new("RGB", (100, 100), color="red")

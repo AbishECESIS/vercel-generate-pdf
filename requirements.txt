@@ -1,7 +1,8 @@
 fastapi
 uvicorn[standard]
 pydantic
-pdfkit
-pypdfium2
-PyPDF2
 Pillow
+PyPDF2
+pypdfium2
+WeasyPrint
+python-multipart

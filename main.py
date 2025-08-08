@@ -8,6 +8,7 @@ import tempfile
 from io import BytesIO
 from pydantic import BaseModel
 from typing import Optional
+from reportlab.pdfgen import canvas
 
 app = FastAPI()
 
@@ -62,5 +63,14 @@ async def check_dependencies():
         result["base64/uuid/tempfile"] = "✅ working"
     except Exception as e:
         result["base64/uuid/tempfile"] = f"❌ {str(e)}"
+
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
+            c = canvas.Canvas(f.name)
+            c.drawString(100, 750, "Hello from ReportLab!")
+            c.save()
+            result["reportlab"] = "✅ working"
+    except Exception as e:
+        result["reportlab"] = f"❌ {str(e)}"
 
     return JSONResponse(content=result)

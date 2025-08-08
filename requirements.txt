@@ -4,3 +4,4 @@ pydantic
 Pillow
 PyPDF2
 python-multipart
+reportlab

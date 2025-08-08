@@ -3,5 +3,4 @@ uvicorn[standard]
 pydantic
 Pillow
 PyPDF2
-WeasyPrint
 python-multipart

@@ -8,8 +8,6 @@ import tempfile
 from io import BytesIO
 from pydantic import BaseModel
 from typing import Optional
-from weasyprint import HTML
-from reportlab.pdfgen import canvas
 
 app = FastAPI()
 
@@ -31,15 +29,6 @@ async def check_dependencies():
     except Exception as e:
         result["pydantic"] = f"❌ {str(e)}"
 
-    # ✅ WeasyPrint test
-    try:
-        html = "<h1>Hello from WeasyPrint</h1><p>This is a PDF!</p>"
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-            HTML(string=html).write_pdf(f.name)
-            result["weasyprint"] = "✅ working"
-    except Exception as e:
-        result["weasyprint"] = f"❌ {str(e)}"
-        
 
     try:
         from PyPDF2 import PdfWriter, PdfReader

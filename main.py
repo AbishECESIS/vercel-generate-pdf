@@ -11,6 +11,7 @@ import pypdfium2 as pdfium
 from io import BytesIO
 from pydantic import BaseModel
 from typing import Optional
+from weasyprint import HTML
 
 app = FastAPI()
 
@@ -32,13 +33,14 @@ async def check_dependencies():
     except Exception as e:
         result["pydantic"] = f"❌ {str(e)}"
 
+    # ✅ WeasyPrint test
     try:
-        html = "<h1>Hello PDF</h1>"
+        html = "<h1>Hello from WeasyPrint</h1><p>This is a PDF!</p>"
         with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-            pdfkit.from_string(html, f.name)
-            result["pdfkit"] = "✅ working"
+            HTML(string=html).write_pdf(f.name)
+            result["weasyprint"] = "✅ working"
     except Exception as e:
-        result["pdfkit"] = f"❌ {str(e)}"
+        result["weasyprint"] = f"❌ {str(e)}"
 
     try:
         # Create a valid 1-page PDF using PyPDF2 and then read it via pypdfium2

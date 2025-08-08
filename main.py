@@ -5,13 +5,11 @@ from PyPDF2 import PdfReader
 import base64
 import uuid
 import tempfile
-import shutil
-import pdfkit
-import pypdfium2 as pdfium
 from io import BytesIO
 from pydantic import BaseModel
 from typing import Optional
 from weasyprint import HTML
+from reportlab.pdfgen import canvas
 
 app = FastAPI()
 
@@ -41,24 +39,7 @@ async def check_dependencies():
             result["weasyprint"] = "✅ working"
     except Exception as e:
         result["weasyprint"] = f"❌ {str(e)}"
-
-    try:
-        # Create a valid 1-page PDF using PyPDF2 and then read it via pypdfium2
-        from PyPDF2 import PdfWriter
-
-        with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as f:
-            writer = PdfWriter()
-            writer.add_blank_page(width=100, height=100)
-            writer.write(f)
-            f.flush()
-
-            pdf = pdfium.PdfDocument(f.name)
-            image = pdf[0].render().to_pil()
-            if isinstance(image, Image.Image):
-                result["pypdfium2"] = "✅ working"
-    except Exception as e:
-        result["pypdfium2"] = f"❌ {str(e)}"
-
+        
 
     try:
         from PyPDF2 import PdfWriter, PdfReader
